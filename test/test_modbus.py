@@ -3,23 +3,6 @@ import unittest
 from _socket import timeout
 
 class TestSerial(unittest.TestCase):
-    def test_wrong_send_crc(self):
-        """
-        Wrong CRC Response test
-            CONDITIONS: 
-            id 255
-            modo: slave
-            baurate: 9600
-            parity: Even
-            stops bits: 1
-            puerto : /dev/tty/USB0
-        """
-        ser = serial.Serial("/dev/ttyUSB1", baudrate=9600,bytesize=serial.EIGHTBITS,parity=serial.PARITY_EVEN,stopbits=serial.STOPBITS_ONE,timeout = 1)
-        ser.write(bytearray([1,2,3]))
-        expected = bytearray([255,130,8,32,150])
-        actual = ser.read(size = 5)
-        self.assertEqual(actual, expected,"Must be equal")
-        ser.close()
         
     def test_read_register(self):
         """
@@ -118,12 +101,44 @@ class TestSerial(unittest.TestCase):
         ser = serial.Serial("/dev/ttyUSB1", baudrate=9600,bytesize=serial.EIGHTBITS,parity=serial.PARITY_EVEN,stopbits=serial.STOPBITS_ONE,timeout = 1)
         
         input = bytearray([255,4,0,0,0,1,36,20])
-        for i in range(100):
-            ser.write(input)
-            expected = bytearray([255,4,2,0,0,144,228])
-            actual = ser.read(size = 7 )
-            self.assertEqual(actual, expected,"Must be equal")
+        #for i in range(100):
+        ser.write(input)
+        expected = bytearray([255,4,2,0,0,144,228])
+        actual = ser.read(size = 7 )
+        self.assertEqual(actual, expected,"Must be equal")
         ser.close()
+
+    def test_setdown_coil(self):
+        """
+        Read first input register
+        Data 0x03
+        """
+        ser = serial.Serial("/dev/ttyUSB1", baudrate=9600,bytesize=serial.EIGHTBITS,parity=serial.PARITY_EVEN,stopbits=serial.STOPBITS_ONE,timeout = 1)
+        
+        input = bytearray([255,5,0,255,0,0,232,36])
+        #for i in range(100):
+        ser.write(input)
+        expected = bytearray([255,5,0,255,0,0,232,36])
+        actual = ser.read(size = 8 )
+        self.assertEqual(actual, expected,"Must be equal")
+        ser.close()
+
+    def test_setup_coil(self):
+        """
+        Read first input register
+        Data 0x03
+        """
+        ser = serial.Serial("/dev/ttyUSB1", baudrate=9600,bytesize=serial.EIGHTBITS,parity=serial.PARITY_EVEN,stopbits=serial.STOPBITS_ONE,timeout = 1)
+        
+        input = bytearray([255,5,0,255,255,0,169,212])
+        #for i in range(100):
+        ser.write(input)
+        expected = bytearray([255,5,0,255,255,0,169,212])
+        actual = ser.read(size = 8 )
+        self.assertEqual(actual, expected,"Must be equal")
+        ser.close()
+
+
     
     
   
